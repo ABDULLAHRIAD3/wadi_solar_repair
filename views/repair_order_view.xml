@@ -1,0 +1,54 @@
+<odoo>
+    <!-- تعديل عرض النموذج (Form View) -->
+    <record id="view_repair_order_form_inherit_serial" model="ir.ui.view">
+        <field name="name">repair.order.form.inherit.serial</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_id']" position="after">
+                <field name="serial_number" string="الرقم التسلسلي"/>
+            </xpath>
+            <xpath expr="//field[@name='schedule_date']" position="after">
+                <field name="type_of_problem" string="نوع المشكلة"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="date_reported" string="تاريخ البلاغ"/>
+            </xpath>   
+            <xpath expr="//field[@name='date_reported']" position="after">
+                <field name="receiving" string="هل تم الاستلام؟" />
+            </xpath>     
+            <xpath expr="//field[@name='receiving']" position="after">
+                <field name="giving_spare" string="هل تم اعطاءه سبير؟"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- تعديل عرض القائمة (List View) -->
+    <record id="view_repair_order_tree_inherit_serial" model="ir.ui.view">
+        <field name="name">repair.order.tree.inherit.serial</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="serial_number"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- تعديل البحث (search View) -->
+    <record id="repair_order_search_view_serial" model="ir.ui.view">
+        <field name="name">repair.order.search.serial</field>
+        <field name="model">repair.order</field>
+        <field name="arch" type="xml">
+            <search string="بحث أوامر الإصلاح">
+                <field name="serial_number" string="الرقم التسلسلي"/>
+                <field name="name" string="المرجع"/>
+                <field name="partner_id" string="العميل"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_by_serial" string="حسب الرقم التسلسلي" context="{'group_by':'serial_number'}"/>
+                    <filter name="group_by_partner" string="حسب العميل" context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
