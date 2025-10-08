@@ -20,9 +20,49 @@
             <xpath expr="//field[@name='receiving']" position="after">
                 <field name="giving_spare" string="هل تم اعطاءه سبير؟"/>
             </xpath>
+<<<<<<< HEAD
         </field>
     </record>
 
+=======
+            <xpath expr="//field[@name='under_warranty']" position="after">
+                <field name="image_file" string="الصورة" widget="image" options="{'no_open': True}" invisible="not under_warranty"/>
+            </xpath>
+            <xpath expr="//field[@name='image_file']" position="after">
+               <field name="actions_taken" string="الاجراءات المتخذة"/>
+            </xpath>
+            <xpath expr="//field[@name='actions_taken']" position="after">
+               <field name="spare_part_ids" string="اجزاء الاستبدال" widget="many2many_tags"
+                    invisible="actions_taken != 'repair'"/>
+            </xpath>
+            <xpath expr="//field[@name='spare_part_ids']" position="after">
+               <field name="pdf_file_for_recharge" widget="binary" string="كشف قراءات التسليم"
+                    invisible="actions_taken != 're_charge'"/>
+            </xpath>
+            <xpath expr="//field[@name='pdf_file_for_recharge']" position="after">
+               <field name="pdf_file_for_replacing" widget="binary" string="وثيقة الاستبدال"
+                    invisible="actions_taken != 'replacing'"/>
+            </xpath>
+        </field>
+    </record>
+
+    
+    <data noupdate="1">
+
+        <record id="ir_cron_repair_reminder" model="ir.cron">
+            <field name="name">Repair Reminder: Notify Before Deadline</field>
+            <field name="model_id" ref="repair.model_repair_order"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_notify_unfinished_repairs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+
+
+>>>>>>> 4ac5aff (تحديث الكود بعد نقل كل التعديلات من المديول الرسمي للاودو للتوريث)
     <!-- تعديل عرض القائمة (List View) -->
     <record id="view_repair_order_tree_inherit_serial" model="ir.ui.view">
         <field name="name">repair.order.tree.inherit.serial</field>
