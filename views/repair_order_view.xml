@@ -20,11 +20,6 @@
             <xpath expr="//field[@name='receiving']" position="after">
                 <field name="giving_spare" string="هل تم اعطاءه سبير؟"/>
             </xpath>
-<<<<<<< HEAD
-        </field>
-    </record>
-
-=======
             <xpath expr="//field[@name='under_warranty']" position="after">
                 <field name="image_file" string="الصورة" widget="image" options="{'no_open': True}" invisible="not under_warranty"/>
             </xpath>
@@ -62,7 +57,7 @@
     </data>
 
 
->>>>>>> 4ac5aff (تحديث الكود بعد نقل كل التعديلات من المديول الرسمي للاودو للتوريث)
+
     <!-- تعديل عرض القائمة (List View) -->
     <record id="view_repair_order_tree_inherit_serial" model="ir.ui.view">
         <field name="name">repair.order.tree.inherit.serial</field>

@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-from importlib.metadata import requires
 
-from odoo import models, fields ,api
-from odoo.exceptions import ValidationError, UserError
-
-=======
 from datetime import datetime, timedelta
 import logging
 
@@ -12,7 +6,7 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 
 _logger = logging.getLogger(__name__)
->>>>>>> 4ac5aff (تحديث الكود بعد نقل كل التعديلات من المديول الرسمي للاودو للتوريث)
+
 
 class RepairOrder(models.Model):
     _inherit = 'repair.order'
@@ -22,17 +16,10 @@ class RepairOrder(models.Model):
     date_reported = fields.Datetime(string="تاريخ الشراء", default=fields.Datetime.now)
     receiving = fields.Boolean(tracking=1)
     giving_spare = fields.Boolean(tracking=1)
-<<<<<<< HEAD
-    
-    
-    repair_parts = fields.Many2one('product.product', string='أجزاء الإصلاح')
-    repair_order_ids = fields.One2many('repair.order', 'repair_parts', string='أوامر الإصلاح')
 
-     
-=======
     pdf_file_for_recharge = fields.Binary(string="Upload PDF", attachment=True)
     pdf_file_for_replacing = fields.Binary(string="Upload PDF", attachment=True)
-    image_file = fields.Image(max_width="1028",max_height="1028")
+    image_file = fields.Image(max_width=1028, max_height=1028)
     #Spare Part 
     spare_part_ids = fields.Many2many(
         'spare.part',
@@ -55,16 +42,13 @@ class RepairOrder(models.Model):
     repair_order_ids = fields.One2many('spare.part', 'repair_id', string='قطع الصيانة')
 
 
->>>>>>> 4ac5aff (تحديث الكود بعد نقل كل التعديلات من المديول الرسمي للاودو للتوريث)
+
     @api.constrains('type_of_problem')
     def _check_type_of_problem(self):
         for record in self:
             if not record.type_of_problem:
                 raise UserError('ادخل نوع المشكلة')
-
-<<<<<<< HEAD
-
-=======
+            
     def cron_notify_unfinished_repairs(self):
         _logger.info("بدأ تنفيذ cron_notify_unfinished_repairs")
         today = datetime.today().date()
@@ -108,4 +92,4 @@ class RepairOrder(models.Model):
             _logger.error(" خطأ أثناء تنفيذ cron_notify_unfinished_repairs: %s", e)
             raise
         
->>>>>>> 4ac5aff (تحديث الكود بعد نقل كل التعديلات من المديول الرسمي للاودو للتوريث)
+
