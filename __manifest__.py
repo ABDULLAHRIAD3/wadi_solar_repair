@@ -3,7 +3,6 @@
     'version': '1.0',
     'author': "Abdullah Riad Joher",
     'summary': 'Add some Featuer field to repair orders',
-
     'depends': ['base','stock', 'repair'],
     'data': [
         'security/ir.model.access.csv',

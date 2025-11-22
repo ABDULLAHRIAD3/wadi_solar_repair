@@ -5,6 +5,9 @@
         <field name="model">repair.order</field>
         <field name="inherit_id" ref="repair.view_repair_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="complaint_recipient" string="متلقي الشكوى"/>
+            </xpath> 
             <xpath expr="//field[@name='picking_id']" position="after">
                 <field name="serial_number" string="الرقم التسلسلي"/>
             </xpath>
@@ -38,6 +41,33 @@
                <field name="pdf_file_for_replacing" widget="binary" string="وثيقة الاستبدال"
                     invisible="actions_taken != 'replacing'"/>
             </xpath>
+            <xpath expr="//field[@name='pdf_file_for_replacing']" position="after">
+                <field name="sirial_number_of_replaced_battary" string="الرقم التسلسلي للبطارية المستبدلة"
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='sirial_number_of_replaced_battary']" position="after">
+                <field name="date_replacing" string="تاريخ الاستبدال"
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='date_replacing']" position="after">
+                <field name="type_" string="النوع" 
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='type_']" position = "after">
+                <field name="reason_of_replacing" string= "سبب الاستبدال" 
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='reason_of_replacing']" position = "after">
+                <field name="replacement_notes" string="ملاحظات الاستبدال"
+                invisible="actions_taken != 'replacing'" />
+            </xpath>
+            <xpath expr="//field[@name='replacement_notes']" position = "after">
+                <field name="card_replacement_notes" string="ملاحظات الكرت المستبدل"
+                 invisible="actions_taken != 'card_replacemenet'" />
+            </xpath>
+            <xpath expr="//field[@name='picking_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
         </field>
     </record>
 
@@ -55,7 +85,6 @@
         </record>
 
     </data>
-
 
 
     <!-- تعديل عرض القائمة (List View) -->
