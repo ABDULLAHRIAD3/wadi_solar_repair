@@ -15,7 +15,7 @@
                 <field name="type_of_problem" string="نوع المشكلة"/>
             </xpath>
             <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="date_reported" string="تاريخ البلاغ"/>
+                <field name="date_reported" string="تاريخ الشراء"/>
             </xpath>   
             <xpath expr="//field[@name='date_reported']" position="after">
                 <field name="receiving" string="هل تم الاستلام؟" />
@@ -49,11 +49,7 @@
                 <field name="date_replacing" string="تاريخ الاستبدال"
                 invisible="actions_taken != 'replacing'"/>
             </xpath>
-            <xpath expr="//field[@name='date_replacing']" position="after">
-                <field name="type_" string="النوع" 
-                invisible="actions_taken != 'replacing'"/>
-            </xpath>
-            <xpath expr="//field[@name='type_']" position = "after">
+            <xpath expr="//field[@name='date_replacing']" position = "after">
                 <field name="reason_of_replacing" string= "سبب الاستبدال" 
                 invisible="actions_taken != 'replacing'"/>
             </xpath>
@@ -62,9 +58,18 @@
                 invisible="actions_taken != 'replacing'" />
             </xpath>
             <xpath expr="//field[@name='replacement_notes']" position = "after">
+                <field name="pdf_file_for_card_replacement" widget="binary" string="وثيقة استبدال الكرت"
+                 invisible="actions_taken != 'card_replacemenet'" />
+            </xpath>
+            <xpath expr="//field[@name='pdf_file_for_card_replacement']" position = "after">
+                <field name="date_card_replacement" string="تاريخ استبدال الكرت"
+                 invisible="actions_taken != 'card_replacemenet'" />
+            </xpath>
+            <xpath expr="//field[@name='date_card_replacement']" position = "after">
                 <field name="card_replacement_notes" string="ملاحظات الكرت المستبدل"
                  invisible="actions_taken != 'card_replacemenet'" />
             </xpath>
+
             <xpath expr="//field[@name='picking_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>

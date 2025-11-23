@@ -17,7 +17,6 @@ class RepairOrder(models.Model):
     giving_spare = fields.Boolean(tracking=1)
     date_repair = fields.Datetime(string="تاريخ الدخول للصيانة", default=fields.Datetime.now)
     date_replacing = fields.Datetime(string="تاريخ الاستبدال", default=fields.Datetime.now)
-    type_ = fields.Char(string="النوع")
     reason_of_replacing = fields.Char(string="سبب الاستبدال")
     replacement_notes = fields.Text(string="ملاحظات الاستبدال")
     sirial_number_of_replaced_battary = fields.Char(string="الرقم التسلسلي للبطارية المستبدلة")
@@ -25,6 +24,8 @@ class RepairOrder(models.Model):
     pdf_file_for_replacing = fields.Binary(string="Upload PDF", attachment=True)
     image_file = fields.Image(max_width=1028, max_height=1028)
     card_replacement_notes = fields.Text(string="ملاحظات الكرت المستبدل")
+    date_card_replacement = fields.Datetime(string="تاريخ استبدال الكرت", default=fields.Datetime.now)
+    pdf_file_for_card_replacement = fields.Binary(string="Upload PDF", attachment=True)
     #Spare Part 
     spare_part_ids = fields.Many2many(
         'spare.part',
