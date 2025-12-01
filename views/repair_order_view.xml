@@ -6,6 +6,9 @@
         <field name="inherit_id" ref="repair.view_repair_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="phone" string="رقم العميل"/>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="after">
                 <field name="complaint_recipient" string="متلقي الشكوى"/>
             </xpath> 
             <xpath expr="//field[@name='picking_id']" position="after">
@@ -69,7 +72,12 @@
                 <field name="card_replacement_notes" string="ملاحظات الكرت المستبدل"
                  invisible="actions_taken != 'card_replacemenet'" />
             </xpath>
-
+            <xpath expr="//field[@name='card_replacement_notes']" position = "after">
+                <field name="x_done_date" string = "تاريخ الانتهاء" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='x_done_date']" position = "after">
+                <field name="x_in_repair_date" string = "تاريخ قيد الاصلاح" readonly="1"/>
+            </xpath>
             <xpath expr="//field[@name='picking_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
@@ -113,10 +121,19 @@
                 <field name="serial_number" string="الرقم التسلسلي"/>
                 <field name="name" string="المرجع"/>
                 <field name="partner_id" string="العميل"/>
+
+                <filter name="done_on_date" string="تم الإصلاح بتاريخ"
+                    domain="[('x_done_date','!=', False)]"
+                    context="{'group_by': 'x_done_date'}"/>
+                <filter name="in_repair_on_date" string="قيد الإصلاح بتاريخ"
+                    domain="[('x_in_repair_date','!=', False)]"
+                    context="{'group_by': 'x_in_repair_date'}"/>
+
                 <group expand="0" string="تجميع حسب">
                     <filter name="group_by_serial" string="حسب الرقم التسلسلي" context="{'group_by':'serial_number'}"/>
                     <filter name="group_by_partner" string="حسب العميل" context="{'group_by':'partner_id'}"/>
                 </group>
+
             </search>
         </field>
     </record>

@@ -9,6 +9,15 @@ _logger = logging.getLogger(__name__)
 class RepairOrder(models.Model):
     _inherit = 'repair.order'
 
+
+    phone = fields.Char(
+        string="Customer Phone",
+        related="partner_id.phone",
+        store=True,
+        readonly=False
+    )
+    x_done_date = fields.Date(string="تاريخ تم الاصلاح", readonly=True)
+    x_in_repair_date = fields.Date(string="تاريخ قيد الاصلاح", readonly=True)
     complaint_recipient = fields.Char(string="متلقي الشكوى")
     serial_number = fields.Char(string='الرقم التسلسلي')
     type_of_problem = fields.Char(string='نوع المشكله')
@@ -26,6 +35,7 @@ class RepairOrder(models.Model):
     card_replacement_notes = fields.Text(string="ملاحظات الكرت المستبدل")
     date_card_replacement = fields.Datetime(string="تاريخ استبدال الكرت", default=fields.Datetime.now)
     pdf_file_for_card_replacement = fields.Binary(string="Upload PDF", attachment=True)
+
     #Spare Part 
     spare_part_ids = fields.Many2many(
         'spare.part',
@@ -48,13 +58,26 @@ class RepairOrder(models.Model):
     repair_parts = fields.Many2one('product.product', string='أجزاء الإصلاح')
     repair_order_ids = fields.One2many('spare.part', 'repair_id', string='قطع الصيانة')
 
-
+    
     @api.constrains('type_of_problem')
     def _check_type_of_problem(self):
         for record in self:
             if not record.type_of_problem:
                 raise UserError('ادخل نوع المشكلة')
+    def action_repair_done(self):
+        res = super(RepairOrder, self).action_repair_done()
+        for rec in self:
+            rec.x_done_date = fields.Date.today()
+        return res
+    
+    def write(self, vals):
+        res = super(RepairOrder, self).write(vals)
+        for rec in self:
+            if 'state' in vals and vals.get('state') == 'under_repair':
+                rec.x_in_repair_date = fields.Date.today()
+        return res
 
+    
     def cron_notify_unfinished_repairs(self):
         _logger.info("بدأ تنفيذ cron_notify_unfinished_repairs")
         today = datetime.today().date()
@@ -94,6 +117,7 @@ class RepairOrder(models.Model):
                         date_deadline=deadline
                     )
 
+    
         except Exception as e:
             _logger.error(" خطأ أثناء تنفيذ cron_notify_unfinished_repairs: %s", e)
             raise
