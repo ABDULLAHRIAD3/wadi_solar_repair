@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View للنموذج الفرعي -->
+    <record id="view_repair_complaint_kpi_line_tree" model="ir.ui.view">
+        <field name="name">repair.complaint.kpi.line.tree</field>
+        <field name="model">repair.complaint.kpi.line</field>
+        <field name="arch" type="xml">
+            <list string="تفاصيل الشكاوى" editable="bottom" create="false" delete="false">
+                <field name="repair_order_id"/>
+                <field name="schedule_date"/>
+                <field name="in_repair_date"/>
+                <field name="days_difference"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- نموذج واجهة مؤشر قياس متوسط زمن الشكاوي -->
+    <record id="view_repair_complaint_kpi_form" model="ir.ui.view">
+        <field name="name">repair.complaint.kpi.form</field>
+        <field name="model">repair.complaint.kpi</field>
+        <field name="arch" type="xml">
+            <form string="متوسط زمن الشكاوي">
+                <sheet>
+                    <group>
+                        <group string="تحديد الفترة الزمنية">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group string="نتائج الحساب">
+                            <field name="total_complaints"/>
+                            <field name="total_days_difference"/>
+                            <field name="average_complaint_time" widget="float"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="تفاصيل الشكاوى" name="complaint_details">
+                            <field name="complaint_line_ids" nolabel="1"/>
+                        </page>
+                    </notebook>
+                    
+                    <div class="oe_clear"/>
+                    <div class="alert alert-info" role="alert" style="margin-top: 10px;">
+                        <strong>المعادلة:</strong> متوسط زمن الشكاوي = (مجموع الفرق بين تاريخ قيد الإصلاح والتاريخ المجدول) / عدد الشكاوى المستلمة
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_calculate_kpi" string="حساب المتوسط" type="object" class="btn-primary"/>
+                    <button string="إغلاق" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- إجراء فتح النافذة -->
+    <record id="action_repair_complaint_kpi" model="ir.actions.act_window">
+        <field name="name">متوسط زمن الشكاوي</field>
+        <field name="res_model">repair.complaint.kpi</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- قائمة في إعدادات الصيانة -->
+    <menuitem id="menu_repair_kpi_root" 
+              name="مؤشرات الأداء" 
+              parent="repair.menu_repair_order" 
+              sequence="100"/>
+    
+    <menuitem id="menu_repair_complaint_kpi" 
+              name="متوسط زمن الشكاوي" 
+              parent="menu_repair_kpi_root" 
+              action="action_repair_complaint_kpi"
+              sequence="10"/>
+
+    <!-- ========== مؤشر متوسط الشكاوى المغلقة ========== -->
+    
+    <!-- List View للنموذج الفرعي للشكاوى المغلقة -->
+    <record id="view_repair_closed_complaint_kpi_line_list" model="ir.ui.view">
+        <field name="name">repair.closed.complaint.kpi.line.list</field>
+        <field name="model">repair.closed.complaint.kpi.line</field>
+        <field name="arch" type="xml">
+            <list string="تفاصيل الشكاوى المغلقة" editable="bottom" create="false" delete="false">
+                <field name="repair_order_id"/>
+                <field name="schedule_date"/>
+                <field name="done_date"/>
+                <field name="days_difference"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- نموذج واجهة مؤشر قياس متوسط الشكاوى المغلقة -->
+    <record id="view_repair_closed_complaint_kpi_form" model="ir.ui.view">
+        <field name="name">repair.closed.complaint.kpi.form</field>
+        <field name="model">repair.closed.complaint.kpi</field>
+        <field name="arch" type="xml">
+            <form string="متوسط الشكاوى المغلقة">
+                <sheet>
+                    <group>
+                        <group string="تحديد الفترة الزمنية">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group string="نتائج الحساب">
+                            <field name="total_closed_complaints"/>
+                            <field name="total_days_difference"/>
+                            <field name="average_closed_complaint_time" widget="float"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="تفاصيل الشكاوى المغلقة" name="closed_complaint_details">
+                            <field name="closed_complaint_line_ids" nolabel="1"/>
+                        </page>
+                    </notebook>
+                    
+                    <div class="oe_clear"/>
+                    <div class="alert alert-info" role="alert" style="margin-top: 10px;">
+                        <strong>المعادلة:</strong> متوسط الشكاوى المغلقة = (مجموع الفرق بين تاريخ الانتهاء والتاريخ المجدول) / عدد الشكاوى التي تم إصلاحها
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_calculate_closed_kpi" string="حساب المتوسط" type="object" class="btn-primary"/>
+                    <button string="إغلاق" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- إجراء فتح نافذة الشكاوى المغلقة -->
+    <record id="action_repair_closed_complaint_kpi" model="ir.actions.act_window">
+        <field name="name">متوسط الشكاوى المغلقة</field>
+        <field name="res_model">repair.closed.complaint.kpi</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- قائمة متوسط الشكاوى المغلقة -->
+    <menuitem id="menu_repair_closed_complaint_kpi" 
+              name="متوسط الشكاوى المغلقة" 
+              parent="menu_repair_kpi_root" 
+              action="action_repair_closed_complaint_kpi"
+              sequence="20"/>
+
+</odoo>

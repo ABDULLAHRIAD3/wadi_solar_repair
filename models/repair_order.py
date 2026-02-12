@@ -121,4 +121,3 @@ class RepairOrder(models.Model):
         except Exception as e:
             _logger.error(" خطأ أثناء تنفيذ cron_notify_unfinished_repairs: %s", e)
             raise
-        

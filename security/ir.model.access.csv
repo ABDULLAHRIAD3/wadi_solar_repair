@@ -1,2 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_spare_part,access_spare_part,model_spare_part,,1,1,1,1
+access_repair_complaint_kpi,access_repair_complaint_kpi,model_repair_complaint_kpi,,1,1,1,1
+access_repair_complaint_kpi_line,access_repair_complaint_kpi_line,model_repair_complaint_kpi_line,,1,1,1,1
+access_repair_closed_complaint_kpi,access_repair_closed_complaint_kpi,model_repair_closed_complaint_kpi,,1,1,1,1
+access_repair_closed_complaint_kpi_line,access_repair_closed_complaint_kpi_line,model_repair_closed_complaint_kpi_line,,1,1,1,1

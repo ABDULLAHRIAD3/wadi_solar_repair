@@ -2,6 +2,7 @@ from odoo import models ,fields
 
 class SparePart(models.Model):
     _name = 'spare.part'
+    _description = "Spare Part for Repair Orders"
     name = fields.Char(string="Spare Part")
     repair_id = fields.Many2one('repair.order', string="طلب الصيانة")
     spare_part_ids = fields.Many2many(
