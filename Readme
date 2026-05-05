@@ -1,0 +1,30 @@
+# 🔧 Wadi Solar Repair Module — Odoo Customization
+
+A custom Odoo module developed for **Al-Wadi Solar Company** to extend 
+and enhance the built-in Repair (after-sales) workflow.
+
+## 📋 What This Module Does
+
+- Adds custom fields to repair orders to track solar equipment details
+- Extends repair workflow stages to match internal business processes  
+- Automates status notifications for repair team and customers
+- Integrates with inventory to auto-update spare parts stock on repair completion
+
+## 🛠 Tech Stack
+
+- **Platform:** Odoo 16/17
+- **Language:** Python, XML
+- **Database:** PostgreSQL
+- **Tools:** Git, VS Code
+
+## 💡 Why I Built This
+
+The default Odoo repair module didn't cover solar equipment-specific 
+workflows. This customization reduced manual data entry by ~40% and 
+improved repair tracking visibility for the operations team.
+
+## 👤 Author
+
+**Abdullah Riad** — IT Support Specialist & Odoo Developer  
+📧 abdullah22riad@gmail.com  
+🔗 [LinkedIn](https://linkedin.com/in/abdullah-joher-6a6857210)
