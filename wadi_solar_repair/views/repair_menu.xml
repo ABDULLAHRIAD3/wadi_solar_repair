@@ -1,0 +1,4 @@
+<odoo>
+    <!-- القائمة الرئيسية للصيانة -->
+    <menuitem id="repair_menu_config" name="Repair Menu" sequence="10"/>
+</odoo>

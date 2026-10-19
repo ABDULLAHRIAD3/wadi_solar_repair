@@ -36,6 +36,19 @@
                <field name="spare_part_ids" string="اجزاء الاستبدال" widget="many2many_tags"
                     invisible="actions_taken != 'repair'"/>
             </xpath>
+
+            <xpath expr="//field[@name='actions_taken']" position="after">
+
+                <field name="cost_of_replacement"
+                       string="تكلفة الاستبدال"
+                       invisible="actions_taken != 'replacing'"/>
+            
+                <field name="cost_of_external_repair"
+                       string="تكلفة الإصلاح الخارجي"
+                       invisible="actions_taken != 'external_repair'"/>
+            
+            </xpath>
+
             <xpath expr="//field[@name='spare_part_ids']" position="after">
                <field name="pdf_file_for_recharge" widget="binary" string="كشف قراءات التسليم"
                     invisible="actions_taken != 're_charge'"/>
@@ -135,6 +148,138 @@
                 </group>
 
             </search>
+        </field>
+    </record>
+    <!-- ========================================================= -->
+    <!-- Repair Hold / تعليق أمر الإصلاح                           -->
+    <!-- ========================================================= -->
+
+    <record id="view_repair_order_form_inherit_hold" model="ir.ui.view">
+        <field name="name">repair.order.form.inherit.hold</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+
+        <field name="arch" type="xml">
+
+            <!-- نحتاج الحقل داخل الـ View لاستخدامه في invisible -->
+            <xpath expr="//form" position="inside">
+                <field name="is_on_hold" invisible="1"/>
+            </xpath>
+
+
+            <!-- زر تعليق الإصلاح -->
+            <xpath expr="//header/field[@name='state']" position="before">
+
+                <button name="action_put_on_hold"
+                        type="object"
+                        string="تعليق الإصلاح"
+                        class="btn-secondary"
+                        icon="fa-pause"
+                        invisible="is_on_hold or state not in ('confirmed', 'under_repair')"/>
+
+                <button name="action_resume_repair"
+                        type="object"
+                        string="استئناف الإصلاح"
+                        class="oe_highlight"
+                        icon="fa-play"
+                        invisible="not is_on_hold"/>
+
+            </xpath>
+
+
+            <!-- منع بدء الإصلاح من الواجهة إذا كان معلقاً -->
+            <xpath expr="//header/button[@name='action_repair_start']"
+                position="attributes">
+                <attribute name="invisible"
+                    add="is_on_hold"
+                    separator=" or "/>
+            </xpath>
+
+
+            <!-- منع زر إنهاء الإصلاح الأول أثناء التعليق -->
+            <xpath expr="//header/button[@name='action_repair_end'][1]"
+                   position="attributes">
+                <attribute name="invisible"
+                           add="is_on_hold"
+                           separator=" or "/>
+            </xpath>
+
+
+            <!-- منع زر إنهاء الإصلاح الثاني أثناء التعليق -->
+            <xpath expr="//header/button[@name='action_repair_end'][2]"
+                   position="attributes">
+                <attribute name="invisible"
+                           add="is_on_hold"
+                           separator=" or "/>
+            </xpath>
+
+
+            <!-- واجهة بيانات التعليق -->
+            <xpath expr="//sheet/div[@class='oe_title']" position="after">
+
+                <!-- الشريط البرتقالي -->
+                <div class="alert alert-warning mt-3 mb-3"
+                     role="alert"
+                     invisible="not is_on_hold">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                        <i class="fa fa-pause-circle fa-lg"/>
+
+                        <strong class="fs-5">
+                            معلّق
+                        </strong>
+
+                        <span>
+                            تم تعليق أمر الإصلاح حالياً.
+                            لن يتم متابعة الإصلاح حتى يتم استئنافه.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- بيانات التعليق -->
+                <group string="بيانات التعليق"
+                       invisible="state not in ('confirmed', 'under_repair') and not is_on_hold">
+
+                    <group>
+
+                        <field name="hold_reason"
+                               string="سبب التعليق"
+                               placeholder="مثال: انتظار قطعة غيار"
+                               readonly="is_on_hold"
+                               />
+
+                        <field name="is_on_hold"
+                               string="حالة التعليق"
+                               readonly="1"/>
+
+                    </group>
+
+                    <group>
+
+                        <field name="hold_date"
+                               string="تاريخ التعليق"
+                               readonly="1"
+                               invisible="not is_on_hold"/>
+
+                        <field name="hold_user_id"
+                               string="بواسطة"
+                               readonly="1"
+                               invisible="not is_on_hold"/>
+
+                        <field name="total_hold_hours"
+                               string="إجمالي ساعات التعليق"
+                               readonly="1"/>
+
+                    </group>
+
+                </group>
+
+            </xpath>
+
         </field>
     </record>
 </odoo>

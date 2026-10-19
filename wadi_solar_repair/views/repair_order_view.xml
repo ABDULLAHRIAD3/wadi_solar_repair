@@ -1,0 +1,140 @@
+<odoo>
+    <!-- تعديل عرض النموذج (Form View) -->
+    <record id="view_repair_order_form_inherit_serial" model="ir.ui.view">
+        <field name="name">repair.order.form.inherit.serial</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="phone" string="رقم العميل"/>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="after">
+                <field name="complaint_recipient" string="متلقي الشكوى"/>
+            </xpath> 
+            <xpath expr="//field[@name='picking_id']" position="after">
+                <field name="serial_number" string="الرقم التسلسلي"/>
+            </xpath>
+            <xpath expr="//field[@name='schedule_date']" position="after">
+                <field name="type_of_problem" string="نوع المشكلة"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="date_reported" string="تاريخ الشراء"/>
+            </xpath>   
+            <xpath expr="//field[@name='date_reported']" position="after">
+                <field name="receiving" string="هل تم الاستلام؟" />
+            </xpath>     
+            <xpath expr="//field[@name='receiving']" position="after">
+                <field name="giving_spare" string="هل تم اعطاءه سبير؟"/>
+            </xpath>
+            <xpath expr="//field[@name='under_warranty']" position="after">
+                <field name="image_file" string="الصورة" widget="image" options="{'no_open': True}" invisible="not under_warranty"/>
+            </xpath>
+            <xpath expr="//field[@name='image_file']" position="after">
+               <field name="actions_taken" string="الاجراءات المتخذة"/>
+            </xpath>
+            <xpath expr="//field[@name='actions_taken']" position="after">
+               <field name="spare_part_ids" string="اجزاء الاستبدال" widget="many2many_tags"
+                    invisible="actions_taken != 'repair'"/>
+            </xpath>
+            <xpath expr="//field[@name='spare_part_ids']" position="after">
+               <field name="pdf_file_for_recharge" widget="binary" string="كشف قراءات التسليم"
+                    invisible="actions_taken != 're_charge'"/>
+            </xpath>
+            <xpath expr="//field[@name='pdf_file_for_recharge']" position="after">
+               <field name="pdf_file_for_replacing" widget="binary" string="وثيقة الاستبدال"
+                    invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='pdf_file_for_replacing']" position="after">
+                <field name="sirial_number_of_replaced_battary" string="الرقم التسلسلي للبطارية المستبدلة"
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='sirial_number_of_replaced_battary']" position="after">
+                <field name="date_replacing" string="تاريخ الاستبدال"
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='date_replacing']" position = "after">
+                <field name="reason_of_replacing" string= "سبب الاستبدال" 
+                invisible="actions_taken != 'replacing'"/>
+            </xpath>
+            <xpath expr="//field[@name='reason_of_replacing']" position = "after">
+                <field name="replacement_notes" string="ملاحظات الاستبدال"
+                invisible="actions_taken != 'replacing'" />
+            </xpath>
+            <xpath expr="//field[@name='replacement_notes']" position = "after">
+                <field name="pdf_file_for_card_replacement" widget="binary" string="وثيقة استبدال الكرت"
+                 invisible="actions_taken != 'card_replacemenet'" />
+            </xpath>
+            <xpath expr="//field[@name='pdf_file_for_card_replacement']" position = "after">
+                <field name="date_card_replacement" string="تاريخ استبدال الكرت"
+                 invisible="actions_taken != 'card_replacemenet'" />
+            </xpath>
+            <xpath expr="//field[@name='date_card_replacement']" position = "after">
+                <field name="card_replacement_notes" string="ملاحظات الكرت المستبدل"
+                 invisible="actions_taken != 'card_replacemenet'" />
+            </xpath>
+            <xpath expr="//field[@name='card_replacement_notes']" position = "after">
+                <field name="x_done_date" string = "تاريخ الانتهاء" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='x_done_date']" position = "after">
+                <field name="x_in_repair_date" string = "تاريخ قيد الاصلاح" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='picking_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    
+    <data noupdate="1">
+
+        <record id="ir_cron_repair_reminder" model="ir.cron">
+            <field name="name">Repair Reminder: Notify Before Deadline</field>
+            <field name="model_id" ref="repair.model_repair_order"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_notify_unfinished_repairs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+
+
+    <!-- تعديل عرض القائمة (List View) -->
+    <record id="view_repair_order_tree_inherit_serial" model="ir.ui.view">
+        <field name="name">repair.order.tree.inherit.serial</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="serial_number"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- تعديل البحث (search View) -->
+    <record id="repair_order_search_view_serial" model="ir.ui.view">
+        <field name="name">repair.order.search.serial</field>
+        <field name="model">repair.order</field>
+        <field name="arch" type="xml">
+            <search string="بحث أوامر الإصلاح">
+                <field name="serial_number" string="الرقم التسلسلي"/>
+                <field name="name" string="المرجع"/>
+                <field name="partner_id" string="العميل"/>
+
+                <filter name="done_on_date" string="تم الإصلاح بتاريخ"
+                    domain="[('x_done_date','!=', False)]"
+                    context="{'group_by': 'x_done_date'}"/>
+                <filter name="in_repair_on_date" string="قيد الإصلاح بتاريخ"
+                    domain="[('x_in_repair_date','!=', False)]"
+                    context="{'group_by': 'x_in_repair_date'}"/>
+
+                <group expand="0" string="تجميع حسب">
+                    <filter name="group_by_serial" string="حسب الرقم التسلسلي" context="{'group_by':'serial_number'}"/>
+                    <filter name="group_by_partner" string="حسب العميل" context="{'group_by':'partner_id'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+</odoo>

@@ -35,7 +35,48 @@ class RepairOrder(models.Model):
     card_replacement_notes = fields.Text(string="ملاحظات الكرت المستبدل")
     date_card_replacement = fields.Datetime(string="تاريخ استبدال الكرت", default=fields.Datetime.now)
     pdf_file_for_card_replacement = fields.Binary(string="Upload PDF", attachment=True)
+    cost_of_external_repair = fields.Float(string = "تكلفه الإصلاح الخارجي")
+    cost_of_replacement = fields.Float(string = "تكلفه الإستبدال")
 
+    # =========================
+    # Repair Hold / تعليق الإصلاح
+    # =========================
+
+    is_on_hold = fields.Boolean(
+        string="معلق",
+        default=False,
+        copy=False,
+        tracking=True,
+        readonly=True,
+    )
+
+    hold_reason = fields.Char(
+        string="سبب التعليق",
+        copy=False,
+        tracking=True,
+    )
+
+    hold_date = fields.Datetime(
+        string="تاريخ التعليق",
+        copy=False,
+        readonly=True,
+        tracking=True,
+    )
+
+    hold_user_id = fields.Many2one(
+        'res.users',
+        string="تم التعليق بواسطة",
+        copy=False,
+        readonly=True,
+        tracking=True,
+    )
+
+    total_hold_hours = fields.Float(
+        string="إجمالي ساعات التعليق",
+        default=0.0,
+        copy=False,
+        readonly=True,
+    )
     #Spare Part 
     spare_part_ids = fields.Many2many(
         'spare.part',
@@ -50,6 +91,7 @@ class RepairOrder(models.Model):
         ('repair','صيانة'),
         ('re_charge','اعادة شحن'),
         ('card_replacemenet','استبدال كرت'),
+        ('external_repair', 'إصلاح خارجي'),
     ],
     string='الاجراءات المتخذة',
     default='repair',
@@ -64,10 +106,20 @@ class RepairOrder(models.Model):
         for record in self:
             if not record.type_of_problem:
                 raise UserError('ادخل نوع المشكلة')
+    
     def action_repair_done(self):
+
+        if self.filtered('is_on_hold'):
+            raise UserError(
+                'لا يمكن إنهاء أمر الإصلاح وهو معلق. '
+                'قم باستئناف الإصلاح أولاً.'
+            )
+
         res = super(RepairOrder, self).action_repair_done()
+
         for rec in self:
             rec.x_done_date = fields.Date.today()
+
         return res
     
     def write(self, vals):
@@ -77,7 +129,93 @@ class RepairOrder(models.Model):
                 rec.x_in_repair_date = fields.Date.today()
         return res
 
+    # دالة تعليق الإصلاح 
     
+    def action_put_on_hold(self):
+        for rec in self:
+
+            # التعليق مسموح فقط في تم التأكيد أو قيد الإصلاح
+            if rec.state not in ('confirmed', 'under_repair'):
+                raise UserError(
+                    'يمكن تعليق أمر الإصلاح فقط عندما تكون حالته '
+                    '"تم التأكيد" أو "قيد الإصلاح".'
+                )
+
+            if rec.is_on_hold:
+                raise UserError('أمر الإصلاح معلق بالفعل.')
+
+            if not rec.hold_reason:
+                raise UserError('يجب إدخال سبب التعليق أولاً.')
+
+            now = fields.Datetime.now()
+
+            rec.write({
+                'is_on_hold': True,
+                'hold_date': now,
+                'hold_user_id': self.env.user.id,
+            })
+
+            rec.message_post(
+                body=(
+                    '<b>تم تعليق أمر الإصلاح</b><br/>'
+                    f'السبب: {rec.hold_reason}<br/>'
+                    f'بواسطة: {self.env.user.name}'
+                )
+            )
+
+        return True
+
+    # دالة استئناف الإصلاح  
+    def action_resume_repair(self):
+        for rec in self:
+
+            if not rec.is_on_hold:
+                raise UserError('أمر الإصلاح غير معلق.')
+
+            now = fields.Datetime.now()
+
+            hold_hours = 0.0
+
+            if rec.hold_date:
+                hold_delta = now - rec.hold_date
+                hold_hours = hold_delta.total_seconds() / 3600.0
+
+            total_hours = rec.total_hold_hours + hold_hours
+
+            previous_reason = rec.hold_reason or '-'
+            previous_user = rec.hold_user_id.name or '-'
+
+            rec.write({
+                'is_on_hold': False,
+                'total_hold_hours': total_hours,
+                'hold_reason': False,
+                'hold_date': False,
+                'hold_user_id': False,
+            })
+
+            rec.message_post(
+                body=(
+                    '<b>تم استئناف أمر الإصلاح</b><br/>'
+                    f'سبب التعليق السابق: {previous_reason}<br/>'
+                    f'تم التعليق بواسطة: {previous_user}<br/>'
+                    f'مدة التعليق: {hold_hours:.2f} ساعة'
+                )
+            )
+
+        return True
+
+    
+    # حماية زر بدء الإصلاح
+    def action_repair_start(self):
+        if self.filtered('is_on_hold'):
+            raise UserError(
+                'لا يمكن بدء الإصلاح لأن أمر الإصلاح معلق. '
+                'قم باستئناف الإصلاح أولاً.'
+            )
+
+        return super(RepairOrder, self).action_repair_start()
+
+
     def cron_notify_unfinished_repairs(self):
         _logger.info("بدأ تنفيذ cron_notify_unfinished_repairs")
         today = datetime.today().date()
